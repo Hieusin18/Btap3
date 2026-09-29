@@ -1,98 +1,262 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+// cspell:ignore Pressable mssv Mssv MSSV
+import { useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function HomeScreen() {
+  const [screen, setScreen] = useState(1);
+  const [userName, setUserName] = useState("");
+  const [mssv, setMssv] = useState("");
+
+  const goToScreen2 = () => {
+    if (!userName.trim() || !mssv.trim()) {
+      Alert.alert("Thông báo", "Vui lòng nhập UserName và MSSV.");
+      return;
+    }
+    setScreen(2);
+  };
+
+  if (screen === 2) {
+    return (
+      <View style={styles.screen2}>
+        <Pressable style={styles.backButton} onPress={() => setScreen(1)}>
+          <Text style={styles.backArrow}>←</Text>
+        </Pressable>
+        <Text style={styles.receivedText}>Name: {userName}</Text>
+        <Text style={styles.receivedText}>MSSV: {mssv}</Text>
+      </View>
+    );
+  }
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <View style={styles.container}>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      {/* ================= HÀNG 1 ================= */}
+      <View style={styles.row1}>
+        <View style={[styles.box, styles.blue]}>
+          <Text style={styles.number}>1</Text>
+        </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        <View style={[styles.box, styles.red]}>
+          <Text style={styles.number}>2</Text>
+        </View>
+      </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      {/* ================= HÀNG 2 ================= */}
+      <View style={styles.row2}>
+        <View style={[styles.box, styles.yellow, styles.one]}>
+          <Text style={[styles.number, styles.black]}>3</Text>
+        </View>
+
+        <View style={[styles.box, styles.green, styles.one]}>
+          <Text style={styles.number}>4</Text>
+        </View>
+
+        <View style={[styles.box, styles.purple, styles.two]}>
+          <Text style={styles.number}>5</Text>
+        </View>
+      </View>
+
+      {/* ================= HÀNG 3 ================= */}
+      <View style={[styles.box, styles.orange]}>
+        <Text style={styles.number}>6</Text>
+      </View>
+
+      {/* ================= HỌ TÊN ================= */}
+      <View style={styles.footer}>
+        <Text style={styles.studentInfoTitle}>Nhập thông tin sinh viên</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your name"
+          placeholderTextColor="#808080"
+          value={userName}
+          onChangeText={setUserName}
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your ID"
+          placeholderTextColor="#808080"
+          value={mssv}
+          onChangeText={setMssv}
+          keyboardType="numeric"
+        />
+        <Pressable style={styles.clickButton} onPress={goToScreen2}>
+          <Text style={styles.buttonText}>Click me</Text>
+        </Pressable>
+      </View>
+
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  /* ================= CONTAINER ================= */
+
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "#ffffff",
+    padding: 5,
   },
-  safeArea: {
+
+  /* ================= HÀNG 1 ================= */
+
+  row1: {
+    flexDirection: "row",
+    height: 165,
+    marginBottom: 10,
+  },
+
+  /* ================= HÀNG 2 ================= */
+
+  row2: {
+    flexDirection: "row",
+    height: 161,
+    gap: 10,
+    marginBottom: 10,
+  },
+
+  /* ================= Ô CHUNG ================= */
+
+  box: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  /* ================= Ô 1 ================= */
+
+  blue: {
+    backgroundColor: "#1976F3",
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    marginRight: 5,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
+
+  /* ================= Ô 2 ================= */
+
+  red: {
+    backgroundColor: "#F93636",
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    marginLeft: 5,
   },
-  title: {
-    textAlign: 'center',
+
+  /* ================= Ô 3 ================= */
+
+  yellow: {
+    backgroundColor: "#FFD719",
   },
-  code: {
-    textTransform: 'uppercase',
+
+  /* ================= Ô 4 ================= */
+
+  green: {
+    backgroundColor: "#27AE60",
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  /* ================= Ô 5 ================= */
+
+  purple: {
+    backgroundColor: "#8139D9",
+  },
+
+  /* Tỷ lệ 3 : 4 : 5 = 1 : 1 : 2 */
+
+  one: {
+    flex: 1,
+  },
+
+  two: {
+    flex: 2,
+  },
+
+  /* ================= Ô 6 ================= */
+
+  orange: {
+    backgroundColor: "#FF7514",
+    width: "100%",
+    height: 142,
+  },
+
+  /* ================= SỐ ================= */
+
+  number: {
+    color: "#ffffff",
+    fontSize: 60,
+    fontWeight: "bold",
+  },
+
+  black: {
+    color: "#000000",
+  },
+
+  /* ================= FOOTER ================= */
+
+  footer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: 65,
+  },
+
+  input: {
+    width: "80%",
+    height: 46,
+    borderWidth: 1,
+    borderColor: "#181717cc",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    fontSize: 16,
+  },
+
+  studentInfoTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 12,
+  },
+
+  receivedText: {
+    marginTop: 20,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#161616",
+  },
+
+  clickButton: {
+    marginTop: 16,
+    backgroundColor: "#1976F3",
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+
+  screen2: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+    padding: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  backButton: {
+    position: "absolute",
+    top: 16,
+    left: 16,
+    backgroundColor: "#00A896",
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+
+  backArrow: {
+    color: "#ffffff",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
